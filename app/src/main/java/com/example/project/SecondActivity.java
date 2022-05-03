@@ -47,4 +47,11 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String name = preferences.getString("name", "inget namn hittades");
+        namepresent.setText(name);
+    }
 }
