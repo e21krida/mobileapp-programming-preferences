@@ -1,7 +1,9 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,11 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
-
-    EditText username;
     TextView namepresent;
     SharedPreferences preferences;
-    Button button;
+    Button forward;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,20 +23,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        username = findViewById(R.id.edit_text);
-        button = findViewById(R.id.save);
         namepresent = findViewById(R.id.namepresent);
-
-        preferences = getSharedPreferences(("preferences"), MODE_PRIVATE);
-
-        button.setOnClickListener(new View.OnClickListener() {
+        preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+        forward = findViewById(R.id.forward);
+        forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("name", username.getText().toString());
-                editor.apply();
-                namepresent.setText(username.getText().toString());
+                Log.d("==>", "Forward button pressed");
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                startActivity(intent);
             }
         });
     }
