@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Shared Preferences</string>
+    <string name="intro_text">Fyll i användarenamn</string>
 </resources>
