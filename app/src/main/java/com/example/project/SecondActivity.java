@@ -15,7 +15,6 @@ public class SecondActivity extends AppCompatActivity {
 
     Button goback;
     EditText username;
-    TextView namepresent;
     SharedPreferences preferences;
     Button button;
 
@@ -34,7 +33,6 @@ public class SecondActivity extends AppCompatActivity {
         });
         username = findViewById(R.id.edit_text);
         button = findViewById(R.id.save);
-        namepresent = findViewById(R.id.namepresent);
         preferences = getSharedPreferences(("preferences"), MODE_PRIVATE);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,16 +40,7 @@ public class SecondActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("name", username.getText().toString());
                 editor.apply();
-                namepresent.setText(username.getText().toString());
-                String name = preferences.getString("name", "inget namn hittades");
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        String name = preferences.getString("name", "inget namn hittades");
-        namepresent.setText(name);
     }
 }

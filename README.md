@@ -1,42 +1,101 @@
+## Stylandet av activity_main.xml
 
-# Rapport
+- Det första jag gjorde för att tillfredsställa kraven var att skapa en TextView samt en Button
+i min activity_main.xml. Detta för att ha en TextView där SharedPreferences kan presenteras, samt
+en knapp som kan ta användaren vidare till den andra aktiviteten, SecondActivity.java
+  
+```
+    <TextView
+        android:id="@+id/namepresent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"
+        />
 
-**Skriv din rapport här!**
 
-_Du kan ta bort all text som finns sedan tidigare_.
+    <Button
+        android:id="@+id/forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/namepresent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Gå till secondactivity"
+        />
+```
 
-## Följande grundsyn gäller dugga-svar:
+## Skapandet samt stylandet av activity_second.xml
 
-- Ett kortfattat svar är att föredra. Svar som är längre än en sida text (skärmdumpar och programkod exkluderat) är onödigt långt.
-- Svaret skall ha minst en snutt programkod.
-- Svaret skall inkludera en kort övergripande förklarande text som redogör för vad respektive snutt programkod gör eller som svarar på annan teorifråga.
-- Svaret skall ha minst en skärmdump. Skärmdumpar skall illustrera exekvering av relevant programkod. Eventuell text i skärmdumpar måste vara läsbar.
-- I de fall detta efterfrågas, dela upp delar av ditt svar i för- och nackdelar. Dina för- respektive nackdelar skall vara i form av punktlistor med kortare stycken (3-4 meningar).
+- Sedan så skapade jag en andra aktivitet, nämligen SecondActivity där datan som sparas till SharedPreferences kan matas in,
+till denna har jag även en TextView som berättar vad EditText rutan tillför, samt en knapp som tar användaren tillbaka
+till den första aktiviteten och en knapp som sparar det inmatade värdet.
+  
+## Intents
 
-Programkod ska se ut som exemplet nedan. Koden måste vara korrekt indenterad då den blir lättare att läsa vilket gör det lättare att hitta syntaktiska fel.
+- Eftersom att jag skapat två knappar, en på vardera aktivitet som tar användaren till den andra aktiviteten, oberoende av
+vilken användaren för tillfället är på, så har jag använt mig av intents.
+```
+        goback = findViewById(R.id.back);
+        goback.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Log.d("==>", "Back button pressed");
+                Intent intent = new Intent (SecondActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+```
+- Detta exempel är från min SecondActivity.java, men samma princip följer i min MainActivity.java. Här skapar jag endast en OnClickListener
+som skapar en ny intent samt aktiverar denna för att förflytta användaren när hen klickar på knappen.
+  
+## Inmatandet av det sparade värdet.
+
+- För att jag ska kunna mata in data til SharedPreferences så måste jag först skapa en sådan, sedan tilldela den ett värde på en OnClickListener som följande:
 
 ```
-function errorCallback(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            // Geolocation API stöds inte, gör något
-            break;
-        case error.POSITION_UNAVAILABLE:
-            // Misslyckat positionsanrop, gör något
-            break;
-        case error.UNKNOWN_ERROR:
-            // Okänt fel, gör något
-            break;
+        username = findViewById(R.id.edit_text);
+        button = findViewById(R.id.save);
+        namepresent = findViewById(R.id.namepresent);
+        preferences = getSharedPreferences(("preferences"), MODE_PRIVATE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("name", username.getText().toString());
+                editor.apply();
+            }
+        });
+```
+- Vad jag egentligen gör här är först hämtar alla delar från xml-filen med findViewById, sedan så säger jag åt min preferences, som är av typen SharedPreferences,
+att hämta preferences. Sedan skapar jag en OnClickListener för den knappen som sparar datan, och säger att när denna
+klickas så skall preferences ändras, sedan matas datan från EditText-en "username" in i SharedPreferences som en "toString",
+sedan apply för att spara detta.
+  
+## Hämtandet av det sparade värdet.
+- För att hämta och presentera det sparade värdet jag har en "onResume" i min MainActivity, denna klass körs alltså
+automatiskt när denna aktivitet öppnas igen, men inte på skapandet. Därmed kommer detta värde skapas lokalt och öppnas varje gång
+applikationen igen öppnas.
+  
+```
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String name = preferences.getString("name", "inget namn hittades");
+        namepresent.setText(name);
     }
-}
-```
+```  
 
-Bilder läggs i samma mapp som markdown-filen.
+- Detta är hur denna ser ut, här så gör jag endast som så att jag säger att String name får värdet som är sparat till preferences,
+och sedan infogar jag denna variabels värde till den TextView vid namn "namepresent" som visar upp texten på mobilapplikationens sida.
+  
 
-![](android.png)
 
-Läs gärna:
 
-- Boulos, M.N.K., Warren, J., Gong, J. & Yue, P. (2010) Web GIS in practice VIII: HTML5 and the canvas element for interactive online mapping. International journal of health geographics 9, 14. Shin, Y. &
-- Wunsche, B.C. (2013) A smartphone-based golf simulation exercise game for supporting arthritis patients. 2013 28th International Conference of Image and Vision Computing New Zealand (IVCNZ), IEEE, pp. 459–464.
-- Wohlin, C., Runeson, P., Höst, M., Ohlsson, M.C., Regnell, B., Wesslén, A. (2012) Experimentation in Software Engineering, Berlin, Heidelberg: Springer Berlin Heidelberg.
+![](skärmdump_första.png)
+
+![](skärmdump_andra.png)
